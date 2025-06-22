@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+
+spring:
+  application:
+    name: CHATGPT-SERVICE
+
+doc:
+  api:
+    path: /doc/api
+    title: audio API
+    description: Documentation for the CHATGPT API
+    version: 1.0.0
+
+
+api:
+  chatgpt:
+    url: https://api.openai.com/v1
+    apiToken: ${OPENAI_API_KEY}
+
+

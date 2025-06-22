@@ -1,0 +1,35 @@
+package com.edu.escuelaing.arsw.chatGpt.infrastructure.controller;
+
+
+import com.edu.escuelaing.arsw.chatGpt.domain.usecases.IaService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/chatgpt")
+public class ChatController {
+
+    @Autowired
+    IaService service;
+
+    @PostMapping("/generate")
+    public ResponseEntity<?> generateResponse(@RequestBody String prompt) {
+        System.out.println("OpenIA");
+        try{
+            Mono<String> response = service.consult(prompt);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("message",e.getMessage()));
+        }
+    }
+
+
+}
