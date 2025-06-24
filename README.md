@@ -43,6 +43,13 @@ A partir del proyecto base, se aplicaron múltiples mejoras para optimizar tanto
 
 ---
 
+## Diagrama de clases
+
+![img.png](src/main/resources/img.png)
+
+
+---
+
 ## 🔧 Otras mejoras
 
 - **Manejo de errores**: Se devuelve una respuesta clara al cliente si ocurre un fallo con la API de ChatGPT.

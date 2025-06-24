@@ -17,7 +17,6 @@ public class ChatServicesImpl implements IaService {
 
     @Override
     public Mono<String> consult(String prompt) {
-        System.out.println(prompt);
         PromptValidationResult validation = validatePrompt(prompt);
 
         if (!validation.isValid()) {
