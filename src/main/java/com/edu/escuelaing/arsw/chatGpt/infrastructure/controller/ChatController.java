@@ -2,6 +2,7 @@ package com.edu.escuelaing.arsw.chatGpt.infrastructure.controller;
 
 
 import com.edu.escuelaing.arsw.chatGpt.domain.usecases.IaService;
+import com.edu.escuelaing.arsw.chatGpt.infrastructure.controller.dto.ChatResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,19 +21,15 @@ public class ChatController {
     IaService service;
 
     @PostMapping("/generate")
-    public Mono<ResponseEntity<Map<String, String>>> generateResponse(@RequestBody String prompt) {
+    public Mono<ResponseEntity<ChatResponse>> generateResponse(@RequestBody String prompt) {
         System.out.println("OpenIA");
 
         return service.consult(prompt)
-                .map(response -> ResponseEntity.ok(Map.of("response", response)))
+                .map(response -> ResponseEntity.ok(new ChatResponse(response)))
                 .onErrorResume(e ->
                         Mono.just(ResponseEntity.internalServerError()
-                                .body(Map.of("message", e.getMessage())))
+                                .body(new ChatResponse("Error: " + e.getMessage())))
                 );
     }
-
-
-
-
 
 }
