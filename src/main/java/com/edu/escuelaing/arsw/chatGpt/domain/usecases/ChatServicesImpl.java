@@ -27,7 +27,9 @@ public class ChatServicesImpl implements IaService {
     private boolean isValidPrompt(String prompt) {
         if (prompt == null || prompt.trim().isEmpty()) return false;
 
+
         String lowerPrompt = prompt.trim().toLowerCase();
+
 
         List<String> trivialInputs = List.of("hola", "hi", "hello", "buenos días", "hey");
 
@@ -35,6 +37,8 @@ public class ChatServicesImpl implements IaService {
 
 
         if (prompt.trim().length() < 10) return false;
+
+
 
         return true;
     }
