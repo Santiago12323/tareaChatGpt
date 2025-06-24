@@ -36,7 +36,7 @@ public class ChatGptWebClient {
     private String buildRequestPayload(String input) throws JsonProcessingException {
 
         Map<String, Object> payload = Map.of(
-                "model", "gpt-4o",
+                "model", "gpt-3.5-turbo",
                 "messages", List.of(
                         Map.of("role", "user", "content", input)
                 ),
