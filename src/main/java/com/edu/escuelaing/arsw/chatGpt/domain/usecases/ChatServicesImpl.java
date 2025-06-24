@@ -33,9 +33,8 @@ public class ChatServicesImpl implements IaService {
 
         if (trivialInputs.contains(lowerPrompt)) return false;
 
-        if (prompt.trim().length() < 10) return false;
 
-        if (!prompt.matches(".*[a-zA-ZáéíóúÁÉÍÓÚñÑ].*")) return false;
+        if (prompt.trim().length() < 10) return false;
 
         return true;
     }
