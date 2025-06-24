@@ -1,5 +1,6 @@
 package com.edu.escuelaing.arsw.chatGpt.domain.usecases;
 
+import com.edu.escuelaing.arsw.chatGpt.Exceptions.PromptValidationResult;
 import com.edu.escuelaing.arsw.chatGpt.infrastructure.controller.dto.ChatGptResponse;
 import com.edu.escuelaing.arsw.chatGpt.infrastructure.restclient.ChatGptWebClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,31 +16,51 @@ public class ChatServicesImpl implements IaService {
     ChatGptWebClient client;
 
     @Override
-    public Mono<String> consult(String prompt){
-        if (!isValidPrompt(prompt)) {
-            return Mono.error(new IllegalArgumentException("La consulta no tiene suficiente valor para enviarla a ChatGPT."));
+    public Mono<String> consult(String prompt) {
+        System.out.println(prompt);
+        PromptValidationResult validation = validatePrompt(prompt);
+
+        if (!validation.isValid()) {
+            return Mono.error(new IllegalArgumentException(validation.getErrorMessage()));
         }
 
         return client.consultChatGpt(prompt)
                 .map(response -> response.getChoices().get(0).getMessage().getContent());
     }
 
-    private boolean isValidPrompt(String prompt) {
-        if (prompt == null || prompt.trim().isEmpty()) return false;
+    private PromptValidationResult validatePrompt(String prompt) {
+        if (prompt == null || prompt.trim().isEmpty()) {
+            return PromptValidationResult.error("El prompt está vacío.");
+        }
 
+        String cleanedPrompt = prompt.trim().toLowerCase();
 
-        String lowerPrompt = prompt.trim().toLowerCase();
+        List<String> trivialInputs = List.of("hola", "hi", "hello", "buenos días", "hey", "¿?", "?", "...");
 
+        if (trivialInputs.contains(cleanedPrompt)) {
+            return PromptValidationResult.error("El prompt es demasiado trivial. Por favor, intenta con una pregunta más específica.");
+        }
 
-        List<String> trivialInputs = List.of("hola", "hi", "hello", "buenos días", "hey");
+        if (cleanedPrompt.length() < 10) {
+            return PromptValidationResult.error("El prompt es demasiado corto. Debe tener al menos 10 caracteres.");
+        }
 
-        if (trivialInputs.contains(lowerPrompt)) return false;
+        String alphaOnly = cleanedPrompt.replaceAll("[^a-zA-Záéíóúñü\\s]", "");
+        if (alphaOnly.trim().isEmpty()) {
+            return PromptValidationResult.error("El prompt no contiene texto significativo.");
+        }
 
+        String[] words = alphaOnly.trim().split("\\s+");
+        if (words.length < 3) {
+            return PromptValidationResult.error("El prompt debe contener al menos tres palabras significativas.");
+        }
 
-        if (prompt.trim().length() < 10) return false;
+        if (cleanedPrompt.matches("[0-9\\p{Punct}\\s]+")) {
+            return PromptValidationResult.error("El prompt no puede ser solo números o signos.");
+        }
 
-
-
-        return true;
+        return PromptValidationResult.ok();
     }
+
+
 }
